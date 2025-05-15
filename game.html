@@ -14,7 +14,7 @@
 <script> // TO FIX c'est vraiment de la merde fait par chatgpt y'a 1000 fois plus simple mais bon pour le mvp ça ira (je dis ça mais dans 2 ans ça aura pas changé) (oui je sais que les commentaires sont publique) (bonjour :D)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  let url = "http://127.0.0.1:8000/code_sample/"+code;
+  let url = "http://20.40.47.225:8080/"+code;
   fetch(url)
     .then(response => response.text())
     .then(html => {
