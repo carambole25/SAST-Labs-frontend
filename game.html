@@ -15,7 +15,7 @@
   // TO FIX c'est vraiment de la merde fait par chatgpt y'a 1000 fois plus simple mais bon pour le mvp ça ira (je dis ça mais dans 2 ans ça aura pas changé) (oui je sais que les commentaires sont publique) (bonjour :D)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  let url = "https://2714-20-40-47-225.ngrok-free.app/code_sample/" + code;
+  let url = "https://50e0-20-40-47-225.ngrok-free.app/code_sample/" + code;
 
   fetch(url, {
     headers: {
@@ -99,7 +99,7 @@
       code_sample: code_sample
     });
 
-    const url = 'https://2714-20-40-47-225.ngrok-free.app/submit_response/?' + params.toString();
+    const url = 'https://50e0-20-40-47-225.ngrok-free.app/submit_response/?' + params.toString();
 
     fetch(url, {
       headers: {
