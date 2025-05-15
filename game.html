@@ -1,85 +1,91 @@
 <!DOCTYPE html>
-    <html lang="fr">
-        <head>
-        <meta charset="utf-8">
-        <title>Projet</title>
-        <link rel="stylesheet" href="css/style_game.css">
-        </head>
-        <body>
-            <div id="code_sample"></div>
-            <div id="choice"></div>
-        </body>
-    </html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Projet</title>
+  <link rel="stylesheet" href="css/style_game.css">
+</head>
+<body>
+  <div id="code_sample"></div>
+  <div id="choice"></div>
+</body>
+</html>
 
-<script> // TO FIX c'est vraiment de la merde fait par chatgpt y'a 1000 fois plus simple mais bon pour le mvp ça ira (je dis ça mais dans 2 ans ça aura pas changé) (oui je sais que les commentaires sont publique) (bonjour :D)
+<script>
+  // TO FIX c'est vraiment de la merde fait par chatgpt y'a 1000 fois plus simple mais bon pour le mvp ça ira (je dis ça mais dans 2 ans ça aura pas changé) (oui je sais que les commentaires sont publique) (bonjour :D)
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
-  let url = "https://2714-20-40-47-225.ngrok-free.app/code_sample/"+code;
-  fetch(url)
-    .then(response => response.text())
-    .then(html => {
-      const temp = document.createElement("div");
-      temp.innerHTML = html;
+  let url = "https://2714-20-40-47-225.ngrok-free.app/code_sample/" + code;
 
-      const codeContainer = document.getElementById("code_sample");
-      const choiceContainer = document.getElementById("choice");
+  fetch(url, {
+    headers: {
+      "ngrok-skip-browser-warning": "true"
+    }
+  })
+  .then(response => response.text())
+  .then(html => {
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
 
-      // Injecter les <pre> dans #code_sample
-      temp.querySelectorAll("pre").forEach(pre => codeContainer.appendChild(pre));
+    const codeContainer = document.getElementById("code_sample");
+    const choiceContainer = document.getElementById("choice");
 
-      // Injecter les <button> dans #choice
-      temp.querySelectorAll("button").forEach(button => choiceContainer.appendChild(button));
+    // Injecter les <pre> dans #code_sample
+    temp.querySelectorAll("pre").forEach(pre => codeContainer.appendChild(pre));
 
-      // Transformer les blocs <pre> : ajouter dynamiquement le <code>
-      document.querySelectorAll("#code_sample pre").forEach(pre => {
-        const header = pre.querySelector("p");
-        if (!header) return;
+    // Injecter les <button> dans #choice
+    temp.querySelectorAll("button").forEach(button => choiceContainer.appendChild(button));
 
-        // Récupère tout le texte brut après le <p>
-        const codeLines = Array.from(pre.childNodes)
-          .filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim())
-          .map(n => n.textContent)
-          .join("");
+    // Transformer les blocs <pre> : ajouter dynamiquement le <code>
+    document.querySelectorAll("#code_sample pre").forEach(pre => {
+      const header = pre.querySelector("p");
+      if (!header) return;
 
-        const code = document.createElement("code");
-        code.textContent = codeLines;
+      // Récupère tout le texte brut après le <p>
+      const codeLines = Array.from(pre.childNodes)
+        .filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim())
+        .map(n => n.textContent)
+        .join("");
 
-        // Supprimer tout sauf le header
-        pre.innerHTML = '';
-        pre.appendChild(header);
-        pre.appendChild(code);
+      const codeBlock = document.createElement("code");
+      codeBlock.textContent = codeLines;
 
-        // Style d'affichage
-        pre.classList.remove("expanded");
-        code.style.display = "none";
-        header.classList.add("file-header");
+      // Supprimer tout sauf le header
+      pre.innerHTML = '';
+      pre.appendChild(header);
+      pre.appendChild(codeBlock);
 
-        // Ajoute un toggle
-        header.style.cursor = "pointer";
-        header.addEventListener("click", () => {
-          const expanded = pre.classList.toggle("expanded");
-          code.style.display = expanded ? "block" : "none";
-        });
+      // Style d'affichage
+      pre.classList.remove("expanded");
+      codeBlock.style.display = "none";
+      header.classList.add("file-header");
 
-        // Highlight.js
-        hljs.highlightBlock(code);
+      // Ajoute un toggle
+      header.style.cursor = "pointer";
+      header.addEventListener("click", () => {
+        const expanded = pre.classList.toggle("expanded");
+        codeBlock.style.display = expanded ? "block" : "none";
       });
 
-      // Extraction optionnelle
-      const fichiers = [];
-      document.querySelectorAll("#code_sample pre").forEach(pre => {
-        const nom = pre.querySelector("p")?.textContent.trim();
-        const code = pre.querySelector("code")?.textContent;
-        if (nom && code) {
-          fichiers.push({ nom, contenu: code });
-        }
-      });
-
-      console.log(fichiers);
-    })
-    .catch(error => {
-      console.error("Erreur lors du chargement du HTML :", error);
+      // Highlight.js
+      hljs.highlightBlock(codeBlock);
     });
+
+    // Extraction optionnelle
+    const fichiers = [];
+    document.querySelectorAll("#code_sample pre").forEach(pre => {
+      const nom = pre.querySelector("p")?.textContent.trim();
+      const contenu = pre.querySelector("code")?.textContent;
+      if (nom && contenu) {
+        fichiers.push({ nom, contenu });
+      }
+    });
+
+    console.log(fichiers);
+  })
+  .catch(error => {
+    console.error("Erreur lors du chargement du HTML :", error);
+  });
 </script>
 
 <script>
@@ -95,20 +101,24 @@
 
     const url = 'https://2714-20-40-47-225.ngrok-free.app/submit_response/?' + params.toString();
 
-    fetch(url)
-      .then(response => {
-        if (!response.ok) throw new Error('Erreur réseau');
-        return response.json();
-      })
-      .then(data => {
-        alert(data);
-        if (typeof data === "string" && data.includes("Bonne réponse")) {
-          window.location.href = "?code="+(parseInt(code) + 1);
-        }
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-      });
+    fetch(url, {
+      headers: {
+        "ngrok-skip-browser-warning": "true"
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Erreur réseau');
+      return response.json();
+    })
+    .then(data => {
+      alert(data);
+      if (typeof data === "string" && data.includes("Bonne réponse")) {
+        window.location.href = "?code=" + (parseInt(code) + 1);
+      }
+    })
+    .catch(error => {
+      console.error('Erreur:', error);
+    });
   }
 
   // Attendre que les boutons soient dans le DOM (injection async)
@@ -125,10 +135,8 @@
   });
 </script>
 
-
 <link rel="stylesheet" href="lib/styles/atom-one-dark.min.css">
 <script src="lib/highlight.min.js"></script>
 <script>
   hljs.initHighlightingOnLoad();
 </script>
-
